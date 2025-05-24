@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>老姐生日快乐！</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', sans-serif;
+            color: #d23669;
+            text-align: center;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* 背景图容器 */
+        .bg-photo {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://i.imgur.com/替换为您的照片.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            z-index: -1;
+            opacity: 0.9;
+            filter: brightness(0.9);
+        }
+        
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 245, 245, 0.7);
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(2px);
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(210, 54, 105, 0.2);
+            animation: fadeIn 1s ease-in;
+            color: #d23669;
+        }
+        
+        .cake {
+            font-size: 120px;
+            margin: 30px 0;
+            text-shadow: 0 0 20px rgba(255, 165, 0, 0.6);
+            animation: bounce 1s infinite alternate;
+        }
+        
+        .message-box {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px auto;
+            box-shadow: 0 5px 15px rgba(210, 54, 105, 0.1);
+            max-width: 500px;
+            animation: scaleIn 0.8s 0.3s both;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(210, 54, 105, 0.1);
+        }
+        
+        .message-box::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #ff9a9e, #fad0c4);
+        }
+        
+        .greeting {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #d23669;
+        }
+        
+        .wish {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+        
+        .heart {
+            color: #ff6b81;
+            font-size: 1.5rem;
+            display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            font-style: italic;
+            background: rgba(255, 255, 255, 0.8);
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 20px;
+            opacity: 0;
+            animation: fadeIn 1s 1s forwards;
+        }
+        
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .heart-shape {
+            position: absolute;
+            opacity: 0;
+            font-size: 20px;
+            animation: float-up 4s linear forwards;
+            color: #ff9a9e;
+        }
+        
+        /* 倒计时样式 */
+        .countdown {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 120px;
+            font-weight: bold;
+            color: #ff4081;
+            text-shadow: 0 0 20px rgba(255, 64, 129, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .countdown.active {
+            opacity: 1;
+            visibility: visible;
+            animation: pulse 0.5s;
+        }
+        
+        /* 视频弹窗样式 */
+        .video-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .video-popup.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .video-container {
+            width: 90%;
+            max-width: 800px;
+            position: relative;
+        }
+        
+        .video-container iframe {
+            width: 100%;
+            height: 450px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-20px); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.5); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes float-up {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+        }
+        
+        @media (max-width: 600px) {
+            h1 { font-size: 2.2rem; }
+            .cake { font-size: 80px; }
+            .greeting { font-size: 1.5rem; }
+            .message-box { width: 90%; }
+            .video-container iframe { height: 250px; }
+            .countdown { font-size: 80px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景图 - 替换为您的照片链接 -->
+    <div class="bg-photo"></div>
+    <div class="bg-overlay"></div>
+    
+    <div class="container">
+        <h1>老姐生日快乐！</h1>
+        
+        <div class="cake">🎂</div>
+        
+        <div class="message-box">
+            <div class="greeting">亲爱的老姐：</div>
+            <div class="wish">又到了一年中最特别的日子，愿快乐永远围绕着你</div>
+            <div class="wish">健康平安常相伴，幸福甜蜜永相随</div>
+            <div class="wish">每一天都比昨天更美好 <span class="heart">❤</span></div>
+        </div>
+        
+        <div class="footer">
+            <p>永远爱你的老弟</p >
+            <p>2025年 · 特别为你制作</p >
+        </div>
+    </div>
+    
+    <!-- 漂浮爱心 -->
+    <div class="floating-hearts" id="heartsContainer"></div>
+    
+    <!-- 倒计时 -->
+    <div class="countdown" id="countdown"></div>
+    
+    <!-- 蜡笔小新视频弹窗 -->
+    <div class="video-popup" id="videoPopup">
+        <div class="video-container">
+            <span class="close-btn" id="closeBtn">×</span>
+            <video src="birthday.mov" controls autoplay style="width:100%;height:450px;border-radius:10px;box-shadow:0 0 20px rgba(255,255,255,0.3);"></video>
+        </div>
+    </div>
+    
+    <script>
+        // 创建漂浮的爱心
+        function createHearts() {
+            const heartsContainer = document.getElementById('heartsContainer');
+            const heart = document.createElement('div');
+            heart.className = 'heart-shape';
+            heart.innerHTML = '❤';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = 3 + Math.random() * 5 + 's';
+            heartsContainer.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 4000);
+        }
+        
+        // 初始爱心
+        for (let i = 0; i < 10; i++) {
+            setTimeout(createHearts, i * 300);
+        }
+        setInterval(createHearts, 800);
+        
+        // 点击页面创建爱心
+        document.addEventListener('click', function() {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(createHearts, i * 200);
+            }
+        });
+        
+        // 倒计时功能
+        function startCountdown() {
+            const countdown = document.getElementById('countdown');
+            countdown.classList.add('active');
+            
+            let counter = 3;
+            countdown.textContent = counter;
+            
+            const countdownInterval = setInterval(() => {
+                counter--;
+                countdown.textContent = counter;
+                
+                if (counter <= 0) {
+                    clearInterval(countdownInterval);
+                    countdown.classList.remove('active');
+                    showVideo();
+                }
+            }, 1000);
+        }
+        
+        // 显示视频
+        function showVideo() {
+            document.getElementById('videoPopup').classList.add('active');
+        }
+        
+        // 5秒后开始倒计时
+        setTimeout(startCountdown, 5000);
+        
+        // 关闭视频弹窗
+        document.getElementById('closeBtn').addEventListener('click', function() {
+            document.getElementById('videoPopup').classList.remove('active');
+        });
+        
+        // 页面加载时自动播放音乐（兼容部分浏览器需手动触发播放）
+        window.addEventListener('DOMContentLoaded', function() {
+            var audio = document.getElementById('bgm');
+            // 立即尝试播放
+            function tryPlay() {
+                audio.play().catch(function() {
+                    // 如果失败，等待用户第一次交互
+                    document.body.addEventListener('click', oncePlay, { once: true });
+                });
+            }
+            function oncePlay() {
+                audio.play();
+            }
+            tryPlay();
+        });
+    </script>
+</body>
+</html>
